@@ -24,7 +24,7 @@ const TickerForm = () => {
 
     setLoading(true);
 
-    const response = await fetch('http://localhost:5000/tickers', {
+    const response = await fetch('http://localhost:5000/alpha', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
