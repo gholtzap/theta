@@ -29,3 +29,7 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.invert {
+  filter: invert(1);
+}

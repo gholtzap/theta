@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import TickerForm from '../components/TickerForm';
+import TimingForm from '../components/TimingForm';
+import Header from '../components/Header';
 
 export default function Alpha() {
   return (
 
     <div>
+      <Header /> 
       <div>
-        <TickerForm />
+        <TimingForm />
       </div>
     </div>
   );

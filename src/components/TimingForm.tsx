@@ -33,7 +33,7 @@ const TickerForm = () => {
     });
 
     const data = await response.json();
-    data.result.forEach(item => item.change_needed = Math.round(item.change_needed)); 
+    data.result.forEach(item => item.change_needed = Math.round(item.change_needed));
     setResults(data.result);
 
     setLoading(false);
@@ -42,7 +42,7 @@ const TickerForm = () => {
   const handleTickerAddition = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tickerInput !== "") {
       addTicker();
-      setTickerInput(""); 
+      setTickerInput("");
     }
   }
 
@@ -66,12 +66,6 @@ const TickerForm = () => {
         </button>
       </div>
 
-
-
-
-
-
-
       {/* Ticker list */}
       <div className="w-3/4 grid grid-cols-6 gap-2 mb-8">
         {tickers.map((ticker, index) => (
@@ -81,7 +75,6 @@ const TickerForm = () => {
           </div>
         ))}
       </div>
-
 
 
       {/* Display results */}
