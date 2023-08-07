@@ -100,7 +100,7 @@ const IndexMakerForm = () => {
                 </div>
 
                 {/* Ticker list */}
-                <div className="w-3/4 flex flex-wrap gap-2 mb-8">
+                <div className="grid grid-cols-5 gap-4 mb-20">
                     {tickers.map((ticker, index) => (
                         <div key={index} className="w-40 h-10 p-6 m-4 text-white rounded-xl border border-zinc-500 flex justify-between items-center">
                             <h2 className="text-xl font-semibold">{ticker}</h2>
@@ -108,6 +108,7 @@ const IndexMakerForm = () => {
                         </div>
                     ))}
                 </div>
+
 
                 {/* Display results */}
 
@@ -134,7 +135,9 @@ const IndexMakerForm = () => {
                     {imageUrl && (
                         <div className="flex flex-col items-center">
                             <h2 className="text-2xl mb-4 text-center">{title}</h2>
-                            <img src={imageUrl} alt="Generated graph" className="w-1.5 md:w-1 lg:w-2/3 mx-auto" />
+                            <img src={imageUrl} alt="Generated graph" className="w-full mx-auto" />
+
+
                         </div>
                     )}
 
