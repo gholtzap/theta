@@ -1,8 +1,12 @@
 import Image from 'next/image'
 import '../styles/globals.css'
+import Header from '../components/Header'
+import { UserProvider } from '../contexts/userContext';
 
 export default function index() {
   return (
+    <UserProvider>
+      <Header />
       <main className="flex min-h-screen flex-col items-center justify-between p-8 bg-zinc-950">
 
         <div className="z-10 w-full max-w-6xl items-center justify-between font-serif text-md lg:flex">
@@ -17,6 +21,8 @@ export default function index() {
               priority
             />
           </p>
+
+
           <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
             <a
               className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
@@ -38,18 +44,33 @@ export default function index() {
         </div>
 
         <div className="flex justify-center items-start min-h-screen">
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center mt-36">
+
             <Image
-              className="relative filter invert"
+              className="relative filter invert mr-16"
               src="/logos/theta-logo.png"
               alt="Theta Logo"
-              width={240}
+              width={120}
               height={67}
               priority
             />
+
+            <Image
+              className="relative filter invert mr-16"
+              src="/logos/theta-text-logo.png"
+              alt="Theta Logo"
+              width={567}
+              height={67}
+              priority
+            />
+
+
+
           </div>
 
         </div>
+
+
 
         <div className="transform -translate-y-60 mb-32 grid text-center place-items-stretch lg:mb-0 lg:grid-cols-4 lg:text-left">
           <a
@@ -86,5 +107,6 @@ export default function index() {
 
         </div>
       </main>
+    </UserProvider>
   )
 }
