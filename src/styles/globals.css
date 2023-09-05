@@ -21,6 +21,7 @@
 }
 
 body {
+  font-family: 'Poppins', sans-serif;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -32,4 +33,8 @@ body {
 
 .invert {
   filter: invert(1);
+}
+
+.monospace {
+  font-family: 'Courier New', Courier, monospace;
 }

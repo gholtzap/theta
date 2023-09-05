@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/globals.css'
 import Header from '../components/Header';
+import { useUser } from 'contexts/userContext';
 
 
 const IndexMakerForm = () => {
@@ -12,6 +13,10 @@ const IndexMakerForm = () => {
     const [imageUrl, setImageUrl] = useState('');
     const [title, setTitle] = useState('');
     const [percentages, setPercentages] = useState({});
+    const [savedIndexes, setSavedIndexes] = useState<any[]>([]);
+const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
+
+    
 
 
     const addTicker = () => {
@@ -49,9 +54,8 @@ const IndexMakerForm = () => {
             const response = await axios.post('http://localhost:5000/beta', requestData, config)
             const base64Image = `data:image/png;base64,${response.data.image}`
             setImageUrl(base64Image)
-            setTitle(response.data.title)  // set the title
-            setPercentages(response.data.percentages)  // set the percentages
-
+            setTitle(response.data.title) 
+            setPercentages(response.data.percentages) 
         } catch (error) {
             console.error('There was an error!', error)
         }
@@ -65,6 +69,66 @@ const IndexMakerForm = () => {
         }
     }
 
+    const { user } = useUser();
+
+    const handleSaveIndex = async () => {
+        if (!user) {
+            alert('You must be logged in to save an index.');
+            return;
+        }
+    
+        const requestData = {
+            username: user.username,
+            indexName: indexName,
+            tickers: tickers.filter(ticker => ticker.trim() !== ''),
+        }
+    
+        try {
+            const response = await axios.post('http://localhost:5000/saveIndex', requestData);
+            
+            // Handle duplicate name error
+            if (response.data.error && response.data.error.includes("already exists")) {
+                alert('An index with this name already exists.');
+                return;
+            }
+    
+            alert('Index saved successfully!');
+        } catch (error) {
+            console.error('Error saving the index', error);
+        }
+    }
+    
+
+
+    useEffect(() => {
+        const fetchSavedIndexes = async () => {
+          if (user) {
+            try {
+              const response = await axios.get(`http://localhost:5000/getSavedIndexes?username=${user.username}`);
+              setSavedIndexes(response.data); 
+            } catch (error) {
+              console.error('Error fetching saved indexes', error);
+            }
+          }
+        }
+    
+        fetchSavedIndexes();
+    }, [user]);
+
+    const loadSavedIndex = (index: string) => {
+        const idx = parseInt(index);
+        if (idx >= 0 && savedIndexes[idx]) {
+            setSelectedIndex(index);
+            setIndexName(savedIndexes[idx].indexName);
+            setTickers(savedIndexes[idx].tickers);
+        } else {
+            // Reset to default if no valid index is selected
+            setSelectedIndex(null);
+            setIndexName('');
+            setTickers([]);
+        }
+    }
+
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white pt-40">
@@ -72,6 +136,8 @@ const IndexMakerForm = () => {
 
                 <h1 className="mb-0 text-5xl font-bold">β</h1>
                 <h1 className="mb-8 text-2xl font-bold">Custom Index</h1>
+
+
 
                 {/* Index name input */}
                 <div className="w-full max-w-md relative rounded-lg mb-8 overflow-hidden border border-zinc-900/30">
@@ -99,6 +165,30 @@ const IndexMakerForm = () => {
                     </button>
                 </div>
 
+                {savedIndexes.length > 0 && (
+                    <div className="w-full max-w-md mb-8">
+                    <label 
+                        htmlFor="savedIndexes"
+                        className="block text-sm font-medium text-white mb-1"
+                    >
+                        Your Saved Indexes:
+                    </label>
+                    <select 
+                        id="savedIndexes"
+                        className="w-full px-4 py-2 bg-zinc-950 border border-zinc-900/30 rounded-lg text-white focus:outline-none focus:border-zinc-600 hover:border-zinc-700"
+                        onChange={e => loadSavedIndex(e.target.value)}
+                        value={selectedIndex}
+                    >
+                        <option value="">Select a saved index</option>
+                        {savedIndexes.map((index, idx) => (
+                            <option key={idx} value={idx}>{index.indexName}</option>
+                        ))}
+                    </select>
+                </div>
+                
+                
+                )}
+
                 {/* Ticker list */}
                 <div className="grid grid-cols-5 gap-4 mb-20">
                     {tickers.map((ticker, index) => (
@@ -108,6 +198,15 @@ const IndexMakerForm = () => {
                         </div>
                     ))}
                 </div>
+
+                <div className="w-full flex justify-center mb-4">
+    <button 
+        className="px-4 py-2 bg-zinc-600 hover:bg-zinc-700 rounded text-white"
+        onClick={handleSaveIndex}
+    >
+        Save Index to Profile
+    </button>
+</div>
 
 
                 {/* Display results */}

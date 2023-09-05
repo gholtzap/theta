@@ -1,5 +1,3 @@
-// contexts/userContext.tsx
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type User = {
@@ -19,7 +17,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User>(null);
 
   useEffect(() => {
-    // On component mount, get user data from localStorage if exists
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
