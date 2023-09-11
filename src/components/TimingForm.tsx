@@ -46,6 +46,8 @@ const TickerForm = () => {
     }
   }
 
+  const maxChange = Math.max(...results.map(result => Math.abs(result.change_needed)));
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white">
       <h1 className="mb-0 text-5xl font-bold">α</h1>
@@ -66,6 +68,8 @@ const TickerForm = () => {
         </button>
       </div>
 
+
+
       {/* Ticker list */}
       <div className="w-3/4 grid grid-cols-6 gap-2 mb-8">
         {tickers.map((ticker, index) => (
@@ -76,17 +80,52 @@ const TickerForm = () => {
         ))}
       </div>
 
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center my-50">
+          <div className="z-10 text-white my-50 ">Loading...</div> {/* or add a spinner here */}
+        </div>
+      )}
+
 
       {/* Display results */}
-      <div className="w-3/4 grid grid-cols-6 gap-4">
-        {Array.isArray(results) && results.map((result, index) => (
-          <div key={index} className="w-40 h-20 p-6 m-0 text-black rounded-xl border-4 border-zinc-200 flex justify-between items-center"
-            style={{ backgroundColor: result.change_needed >= 0 ? '#d1e7dd' : '#f8d7da' }}>
-            <h2 className="text-xl font-semibold">{result.ticker.toUpperCase()}</h2>
-            <p className="mt-2 text-md">{result.change_needed}</p>
-          </div>
-        ))}
+
+
+      <div className="w-3/4 grid grid-cols-6 gap-6">
+        {Array.isArray(results) && results.map((result, index) => {
+          const barWidth = Math.abs((result.change_needed / maxChange) * 100);
+
+          return (
+            <div
+              key={index}
+              className={`w-40 h-32 p-4 m-0 text-black rounded-xl border-4 transition-transform transform duration-150 hover:scale-105 
+                    ${result.change_needed >= 0 ? 'bg-green-100 border-green-300 hover:bg-green-200' : 'bg-red-100 border-red-300 hover:bg-red-200'}`}
+            >
+              <div className="flex justify-between items-center h-5/6">
+                <div>
+                  <h2 className="text-xl font-bold mb-1">{result.ticker.toUpperCase()}</h2>
+                  <p className="text-sm text-gray-500">{result.company_name}</p> {/* Displaying the company name */}
+                </div>
+                <div className="flex flex-col items-end">
+                  <p className={`text-md font-semibold ${result.change_needed >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {result.change_needed}
+                  </p>
+                  <p className={`text-sm font-medium ${result.change_needed >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    {result.percentage_change}%
+                  </p>
+                </div>
+              </div>
+              {/* Illustrative Bar */}
+              <div className="w-full h-2 mt-4 bg-gray-200 rounded">
+                <div className={`h-full rounded ${result.change_needed >= 0 ? 'bg-green-400' : 'bg-red-400'}`} style={{ width: `${barWidth}%` }}></div>
+              </div>
+            </div>
+          )
+        })}
       </div>
+
+
+
+
     </div>
   );
 }

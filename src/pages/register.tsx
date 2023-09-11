@@ -5,11 +5,14 @@ import { useRouter } from 'next/router';
 import Header from '../components/Header';
 
 export default function SignupPage() {
-    const router = useRouter();  
+    const router = useRouter();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
 
     async function handleSignup(event: { preventDefault: () => void; target: HTMLFormElement | undefined; }) {
         event.preventDefault();
+        setLoading(true);
 
         const formData = new FormData(event.target);
 
@@ -27,7 +30,7 @@ export default function SignupPage() {
             password: password,
         };
 
-        const response = await fetch('http://localhost:5000/signup', {  
+        const response = await fetch('http://localhost:5000/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -36,12 +39,14 @@ export default function SignupPage() {
         });
 
         if (response.ok) {
-            router.push('/login'); 
+            router.push('/login');
         } else {
             const errorData = await response.json();
             console.error(errorData.error);
-            setErrorMessage(errorData.error); 
+            setErrorMessage(errorData.error);
         }
+
+        setLoading(false);
     }
 
     return (
@@ -113,7 +118,10 @@ export default function SignupPage() {
                         </div>
 
                         <div className="flex items-center justify-between">
-                            <button type="submit" className="px-4 py-2 font-bold text-white bg-blue-500 rounded-md hover:bg-blue-600">Register</button>
+                            <button type="submit" className="px-4 py-2 font-bold text-white bg-blue-500 rounded-md hover:bg-blue-600" disabled={loading}>
+                                {loading ? 'Registering...' : 'Register'}
+                            </button>
+
                             <a href="/login" className="text-sm text-black text-blue-500 hover:underline">Login</a>
                         </div>
                     </form>

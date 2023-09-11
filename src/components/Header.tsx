@@ -23,10 +23,15 @@ const Header = () => {
 
     return (
         <header className="w-full bg-zinc-950 text-white fixed top-0 z-50 shadow-md">
+        <div className="container mx-auto flex justify-between items-center p-5">
 
-
-            <div className="container mx-auto flex justify-between items-center p-5">
-
+            {/* Logo and User Status */}
+            <div className="flex items-center space-x-4">
+                <Link href="/">
+                    <div className="text-2xl font-bold cursor-pointer">
+                        <img src="/logos/theta-logo.png" className="invert" height={40} width={40}></img>
+                    </div>
+                </Link>
                 {user ? (
                     <>
                         <div className="bg-zinc-800 p-4 rounded-md shadow-md">
@@ -35,13 +40,9 @@ const Header = () => {
                     </>
                 ) : (
                     <div className="flex items-center space-x-4">
-                        <Link href="/">
-                            <div className="text-2xl font-bold cursor-pointer">
-                                <img src="/logos/theta-logo.png" className="invert" height={40} width={40}></img>
-                            </div>
-                        </Link>
+
                         <p className="text-gray-600">
-                            Not logged in. ‎ 
+                            Not logged in. ‎
                             <Link href="/login" className="text-blue-600 hover:underline cursor-pointer">
                                 log in
                             </Link>
@@ -54,6 +55,7 @@ const Header = () => {
 
                     </div>
                 )}
+                </div>
 
                 {/* Logo and home link */}
 

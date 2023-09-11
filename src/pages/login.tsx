@@ -1,15 +1,23 @@
 import Image from 'next/image';
 import '../styles/globals.css';
 import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 import Header from '../components/Header';
 import jwt from 'jsonwebtoken';
 
 
+
+
 export default function LoginPage() {
+
+  const [loading, setLoading] = useState(false);
+  
   const router = useRouter();
 
   async function handleLogin(event) {
     event.preventDefault();
+
+    setLoading(true); // start loading
 
     const formData = new FormData(event.target);
     const data = {
@@ -39,11 +47,13 @@ export default function LoginPage() {
 
       localStorage.setItem('currentUser', JSON.stringify({ email: userEmail, username: userName }));
 
-      router.push('/'); 
+      router.push('/');
     }
     else {
       console.error(responseData.error);
     }
+
+    setLoading(false);
   }
 
   function handleLogout() {
@@ -112,7 +122,10 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <button type="submit" className="px-4 py-2 font-bold text-white bg-white-500 rounded-md hover:bg-white-600">Login</button>
+              <button type="submit" className="px-4 py-2 font-bold text-white bg-white-500 rounded-md hover:bg-white-600" disabled={loading}>
+                {loading ? 'Logging in...' : 'Login'}
+              </button>
+
               <a href="/register" className="text-sm text-white-500 hover:underline">Register</a>
             </div>
           </form>
