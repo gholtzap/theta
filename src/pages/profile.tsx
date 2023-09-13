@@ -9,8 +9,6 @@ const Profile = () => {
   const [profilePicturePreview, setProfilePicturePreview] = useState('');
 
   useEffect(() => {
-    // TODO: Fetch user data from the backend and populate fields
-    // This is a placeholder, adapt it according to your needs.
     const fetchUserData = async () => {
       try {
         const response = await axios.get('/path-to-get-user-data');

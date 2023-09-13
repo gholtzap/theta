@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import '../styles/globals.css'
 
-
 const TickerForm = () => {
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const [tickers, setTickers] = useState<string[]>([]);
   const [tickerInput, setTickerInput] = useState("");
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
+  
 
   const addTicker = () => {
     if (!tickers.includes(tickerInput)) {
@@ -24,7 +27,7 @@ const TickerForm = () => {
 
     setLoading(true);
 
-    const response = await fetch('http://localhost:5000/alpha', {
+    const response = await fetch(`${API_URL}/alpha`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,8 +71,6 @@ const TickerForm = () => {
         </button>
       </div>
 
-
-
       {/* Ticker list */}
       <div className="w-3/4 grid grid-cols-6 gap-2 mb-8">
         {tickers.map((ticker, index) => (
@@ -82,14 +83,12 @@ const TickerForm = () => {
 
       {loading && (
         <div className="fixed inset-0 flex items-center justify-center my-50">
-          <div className="z-10 text-white my-50 ">Loading...</div> {/* or add a spinner here */}
+          <div className="z-10 text-white my-50 ">Loading...</div>
         </div>
       )}
 
 
       {/* Display results */}
-
-
       <div className="w-3/4 grid grid-cols-6 gap-6">
         {Array.isArray(results) && results.map((result, index) => {
           const barWidth = Math.abs((result.change_needed / maxChange) * 100);
@@ -122,10 +121,6 @@ const TickerForm = () => {
           )
         })}
       </div>
-
-
-
-
     </div>
   );
 }

@@ -4,7 +4,9 @@ import '../styles/globals.css'
 import Header from '../components/Header';
 import { useUser } from 'contexts/userContext';
 
+
 const IndexMakerForm = () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
     const [tickers, setTickers] = useState<string[]>([]);
     const [tickerInput, setTickerInput] = useState('');
@@ -15,6 +17,8 @@ const IndexMakerForm = () => {
     const [savedIndexes, setSavedIndexes] = useState<any[]>([]);
     const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    
 
     const addTicker = () => {
         if (tickerInput && !tickers.includes(tickerInput)) {
@@ -48,7 +52,8 @@ const IndexMakerForm = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/beta', requestData, config)
+            console.log(API_URL)
+            const response = await axios.post(`${API_URL}/beta`, requestData, config)
             const base64Image = `data:image/png;base64,${response.data.image}`
             setImageUrl(base64Image)
             setTitle(response.data.title)
@@ -88,7 +93,7 @@ const IndexMakerForm = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/saveIndex', requestData);
+            const response = await axios.post(`${API_URL}/beta`, requestData);
 
             console.log(response.data);
 
@@ -119,15 +124,19 @@ const IndexMakerForm = () => {
 
     useEffect(() => {
         const fetchSavedIndexes = async () => {
+            setIsLoading(true);
             if (user) {
                 try {
-                    const response = await axios.get(`http://localhost:5000/getSavedIndexes?username=${user.username}`);
+                    const response = await axios.get(`${API_URL}/getSavedIndexes?username=${user.username}`);
                     setSavedIndexes(response.data);
                 } catch (error) {
                     console.error('Error fetching saved indexes', error);
+                } finally {
+                    setIsLoading(false);
                 }
             }
         }
+
 
         fetchSavedIndexes();
     }, [user]);
@@ -144,6 +153,7 @@ const IndexMakerForm = () => {
             setTickers([]);
         }
     }
+
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white pt-40">
@@ -186,27 +196,38 @@ const IndexMakerForm = () => {
                     </div>
                 )}
 
-                {savedIndexes.length > 0 && (
+
+                {isLoading ? (
+                    <div className="w-full max-w-md mb-8 text-center">
+                        Loading saved indexes...
+                    </div>
+                ) : (
                     <div className="w-full max-w-md mb-8">
-                        <label
-                            htmlFor="savedIndexes"
-                            className="block text-sm font-medium text-white mb-1"
-                        >
-                            Your Saved Indexes:
-                        </label>
-                        <select
-                            id="savedIndexes"
-                            className="w-full px-4 py-2 bg-zinc-950 border border-zinc-900/30 rounded-lg text-white focus:outline-none focus:border-zinc-600 hover:border-zinc-700"
-                            onChange={e => loadSavedIndex(e.target.value)}
-                            value={selectedIndex}
-                        >
-                            <option value="">Select a saved index</option>
-                            {savedIndexes.map((index, idx) => (
-                                <option key={idx} value={idx}>{index.indexName}</option>
-                            ))}
-                        </select>
+                        <div className="w-full max-w-md mb-8">
+                            <label
+                                htmlFor="savedIndexes"
+                                className="block text-sm font-medium text-white mb-1"
+                            >
+                                Your Saved Indexes:
+                            </label>
+                            <select
+                                id="savedIndexes"
+                                className="w-full px-4 py-2 bg-zinc-950 border border-zinc-900/30 rounded-lg text-white focus:outline-none focus:border-zinc-600 hover:border-zinc-700"
+                                onChange={e => loadSavedIndex(e.target.value)}
+                                value={selectedIndex}
+                                disabled={savedIndexes.length === 0}
+                            >
+                                <option value="">
+                                    {savedIndexes.length === 0 ? "No saved indexes" : "Select a saved index"}
+                                </option>
+                                {savedIndexes.map((index, idx) => (
+                                    <option key={idx} value={idx}>{index.indexName}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 )}
+
 
                 {/* Ticker list */}
                 <div className="grid grid-cols-5 gap-4 mb-20">

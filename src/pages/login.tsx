@@ -11,6 +11,8 @@ import jwt from 'jsonwebtoken';
 export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const UI_URL = process.env.NEXT_PUBLIC_UI_URL;
   
   const router = useRouter();
 
@@ -25,7 +27,7 @@ export default function LoginPage() {
       password: formData.get('password')
     };
 
-    const response = await fetch('http://localhost:5000/login', {
+    const response = await fetch(`${API_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -83,7 +85,7 @@ export default function LoginPage() {
           <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
             <a
               className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-              href="http://localhost:3000/"
+              href= {UI_URL}
               target="_blank"
               rel="noopener noreferrer"
             >
