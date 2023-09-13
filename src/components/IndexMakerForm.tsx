@@ -49,7 +49,6 @@ const IndexMakerForm = () => {
             responseType: 'json' as any
         };
 
-
         try {
             console.log(API_URL)
             const response = await axios.post(`${API_URL}/beta`, requestData, config)
@@ -61,7 +60,6 @@ const IndexMakerForm = () => {
             console.error('There was an error!', error)
         }
     }
-
 
     const handleTickerAddition = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && tickerInput.trim() !== "") {

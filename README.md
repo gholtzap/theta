@@ -2,7 +2,7 @@
 <img src ="public/logos/theta-logo.png" width = 100 height = 100>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <img src = "public/logos/theta-text-logo.png" width = 400 height = 100>
 ### Kingston's tools, now available to everyone.
 
-### *Currently in development. Features may be bugged or not present while I work on porting everything from Kingston.*
+### *Currently in development. Not production ready.
 
 
 ### Tech Used:
@@ -12,7 +12,7 @@
 ### If you'd like to play around with Theta while it's in development:
 
 1. Run the Kingston backend API
-    - git clone [Kingston](https://github.com/gholtzap/kingston-invest)
+    - git clone [Kingston](https://github.com/gholtzap/kingston-api)
     - ``python api/run.py``
 2. Run the Theta frontend
     - git clone Theta
@@ -29,4 +29,5 @@
         - 'Buys' are green, the number next to it is how many $ it needs to decrease to no longer be a buy. (More positive = better)
         - 'No buys' are red. The number next to it is how many $ it is below the 'buy' threshold. (More negative = worse)
 2. ## β (Beta) [Index Maker]
-    - WIP :)
+    - Create your own stock indexes by setting an index name, and then listing all tickers to be included in the index.
+    - Program will output a graph of your index's performance against the SP500 and DJI charts.
