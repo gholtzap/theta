@@ -7,7 +7,7 @@ const TickerForm = () => {
 
   const [tickers, setTickers] = useState<string[]>([]);
   const [tickerInput, setTickerInput] = useState("");
-  const [results, setResults] = useState<Result[]>([]);
+  const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   
 
@@ -22,7 +22,7 @@ const TickerForm = () => {
     setTickers(tickers.filter((_, i) => i !== index));
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     setLoading(true);
@@ -36,11 +36,12 @@ const TickerForm = () => {
     });
 
     const data = await response.json();
-    data.result.forEach(item => item.change_needed = Math.round(item.change_needed));
+    data.result.forEach((item: { change_needed: number; }) => item.change_needed = Math.round(item.change_needed));
     setResults(data.result);
 
     setLoading(false);
-  }
+}
+
 
   const handleTickerAddition = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tickerInput !== "") {

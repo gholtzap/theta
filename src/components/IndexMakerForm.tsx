@@ -18,7 +18,7 @@ const IndexMakerForm = () => {
     const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    
+
 
     const addTicker = () => {
         if (tickerInput && !tickers.includes(tickerInput)) {
@@ -45,11 +45,10 @@ const IndexMakerForm = () => {
         }
 
         const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            responseType: 'json'
-        }
+            headers: { 'Content-Type': 'application/json' },
+            responseType: 'json' as any
+        };
+
 
         try {
             console.log(API_URL)
@@ -107,19 +106,31 @@ const IndexMakerForm = () => {
             }
 
             alert('Index saved successfully!');
-        } catch (error) {
-            console.error('Error saving the index', error);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error('Error saving the index', error);
 
-            if (error.response && error.response.data.error) {
-                if (error.response.data.error.includes("An index with this name already exists")) {
-                    setErrorMsg('An index with this name already exists.');
+                const responseProperty = (error as any).response;
+                if (responseProperty && typeof responseProperty === 'object' && responseProperty.data) {
+                    const errorData = responseProperty.data;
+                    if (errorData.error && typeof errorData.error === 'string') {
+                        if (errorData.error.includes("An index with this name already exists")) {
+                            setErrorMsg('An index with this name already exists.');
+                        } else {
+                            setErrorMsg(errorData.error);
+                        }
+                    } else {
+                        setErrorMsg('There was an error saving the index. Please try again later.');
+                    }
                 } else {
-                    setErrorMsg(error.response.data.error);
+                    setErrorMsg('There was an error saving the index. Please try again later.');
                 }
             } else {
                 setErrorMsg('There was an error saving the index. Please try again later.');
             }
         }
+
+
     }
 
     useEffect(() => {
@@ -136,7 +147,6 @@ const IndexMakerForm = () => {
                 }
             }
         }
-
 
         fetchSavedIndexes();
     }, [user]);
@@ -162,8 +172,6 @@ const IndexMakerForm = () => {
                 <h1 className="mb-0 text-5xl font-bold">β</h1>
                 <h1 className="mb-8 text-2xl font-bold">Custom Index</h1>
 
-
-
                 {/* Index name input */}
                 <div className="w-full max-w-md relative rounded-lg mb-8 overflow-hidden border border-zinc-900/30">
                     <input
@@ -176,7 +184,7 @@ const IndexMakerForm = () => {
                 </div>
 
                 {/* Ticker input */}
-                <div className="w-full max-w-md relative rounded-lg mb-8 overflow-hidden border border-zinc-900/30">
+                <form onSubmit={handleSubmit} className="w-full max-w-md relative rounded-lg mb-8 overflow-hidden border border-zinc-900/30">
                     <input
                         type="text"
                         value={tickerInput}
@@ -185,10 +193,11 @@ const IndexMakerForm = () => {
                         placeholder="Add a ticker"
                         className="w-full px-4 py-2 focus:outline-none text-black"
                     />
-                    <button type="button" onClick={handleSubmit} className="absolute right-0 top-0 bg-white-500 text-white border-none px-6 py-3 scale-150">
+                    <button type="submit" className="absolute right-0 top-0 bg-white-500 text-white border-none px-6 py-3 scale-150">
                         <img src="double_arrow.svg" alt="Submit" className="w-4 h-4" />
                     </button>
-                </div>
+                </form>
+
 
                 {errorMsg && (
                     <div className="w-full max-w-md mb-4 text-red-500 bg-red-100 p-2 rounded border border-red-400">
@@ -214,7 +223,7 @@ const IndexMakerForm = () => {
                                 id="savedIndexes"
                                 className="w-full px-4 py-2 bg-zinc-950 border border-zinc-900/30 rounded-lg text-white focus:outline-none focus:border-zinc-600 hover:border-zinc-700"
                                 onChange={e => loadSavedIndex(e.target.value)}
-                                value={selectedIndex}
+                                value={selectedIndex || ""}
                                 disabled={savedIndexes.length === 0}
                             >
                                 <option value="">
@@ -253,7 +262,7 @@ const IndexMakerForm = () => {
                 <div className="w-full flex justify-center">
                     <div className="w-1/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-8 auto-rows-max grid-flow-row-dense">
                         {Object.entries(percentages)
-                            .sort(([, a], [, b]) => b - a)
+                            .sort(([, a], [, b]) => (b as number) - (a as number))
                             .map(([ticker, percentage]) => (
                                 <div key={ticker} className="mb-4">
                                     <span className="inline-block w-24 text-white">{ticker}:</span>

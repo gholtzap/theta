@@ -16,15 +16,18 @@ export default function LoginPage() {
   
   const router = useRouter();
 
-  async function handleLogin(event) {
+  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setLoading(true);
 
-    setLoading(true); // start loading
+    const formData = new FormData(event.currentTarget);
 
-    const formData = new FormData(event.target);
+    const password = formData.get('password') as string;
+
     const data = {
-      email: formData.get('email'),
-      password: formData.get('password')
+        username: formData.get('username') as string,
+        email: formData.get('email') as string,
+        password: password,
     };
 
     const response = await fetch(`${API_URL}/login`, {

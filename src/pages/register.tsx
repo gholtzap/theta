@@ -13,26 +13,26 @@ export default function SignupPage() {
     const [loading, setLoading] = useState(false);
 
 
-    async function handleSignup(event: { preventDefault: () => void; target: HTMLFormElement | undefined; }) {
+    async function handleSignup(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setLoading(true);
-
-        const formData = new FormData(event.target);
-
-        const password = formData.get('password');
-        const confirmPassword = formData.get('confirmPassword');
-
+    
+        const formData = new FormData(event.currentTarget);
+    
+        const password = formData.get('password') as string;
+        const confirmPassword = formData.get('confirmPassword') as string;
+    
         if (password !== confirmPassword) {
             setErrorMessage("Passwords do not match.");
             return;
         }
-
+    
         const data = {
-            username: formData.get('username'),
-            email: formData.get('email'),
+            username: formData.get('username') as string,
+            email: formData.get('email') as string,
             password: password,
         };
-
+    
         const response = await fetch(`${API_URL}/signup`, {
             method: 'POST',
             headers: {
@@ -40,7 +40,7 @@ export default function SignupPage() {
             },
             body: JSON.stringify(data),
         });
-
+    
         if (response.ok) {
             router.push('/login');
         } else {
@@ -48,7 +48,7 @@ export default function SignupPage() {
             console.error(errorData.error);
             setErrorMessage(errorData.error);
         }
-
+    
         setLoading(false);
     }
 
