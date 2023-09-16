@@ -18,11 +18,21 @@ const IndexMakerForm = () => {
     const [selectedIndex, setSelectedIndex] = useState<string | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [notification, setNotification] = useState<string | null>(null);
 
+    const NotificationComponent = () => {
+        if (!notification) return null;
+        return (
+            <div className="w-full max-w-md mb-4 text-white bg-red-600 p-2 rounded border border-red-400">
+                {notification}
+                <button onClick={() => setNotification(null)} className="ml-4">Close</button>
+            </div>
+        );
+    };
 
     const addTicker = () => {
         if (tickerInput && !tickers.includes(tickerInput)) {
-            setTickers([...tickers, tickerInput]);
+            setTickers(prevTickers => [...prevTickers, tickerInput]);
         }
         setTickerInput('');
     }
@@ -35,7 +45,7 @@ const IndexMakerForm = () => {
         e.preventDefault();
 
         if (tickers.length === 0 || tickers.every(ticker => ticker.trim() === '')) {
-            alert('Please add at least one ticker before submitting.')
+            setNotification('Please add at least one ticker before submitting.');
             return;
         }
 
@@ -50,7 +60,6 @@ const IndexMakerForm = () => {
         };
 
         try {
-            console.log(API_URL)
             const response = await axios.post(`${API_URL}/beta`, requestData, config)
             const base64Image = `data:image/png;base64,${response.data.image}`
             setImageUrl(base64Image)
@@ -74,7 +83,7 @@ const IndexMakerForm = () => {
         setErrorMsg(null);
 
         if (!user) {
-            alert('You must be logged in to save an index.');
+            setNotification('You must be logged in to save an index.');
             return;
         }
 
@@ -127,8 +136,6 @@ const IndexMakerForm = () => {
                 setErrorMsg('There was an error saving the index. Please try again later.');
             }
         }
-
-
     }
 
     useEffect(() => {
@@ -165,6 +172,7 @@ const IndexMakerForm = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white pt-40">
+            <NotificationComponent />
             <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white">
 
                 <h1 className="mb-0 text-5xl font-bold">β</h1>
@@ -202,7 +210,6 @@ const IndexMakerForm = () => {
                         {errorMsg}
                     </div>
                 )}
-
 
                 {isLoading ? (
                     <div className="w-full max-w-md mb-8 text-center">
