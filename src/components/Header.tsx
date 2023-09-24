@@ -6,7 +6,7 @@ import { useUser } from '../contexts/userContext';
 const hoverColor = "text-cyan-400"
 
 const Header = () => {
-    const { user, setUser } = useUser();  // Destructure both user and setUser
+    const { user, setUser, isLoading } = useUser();
     const router = useRouter();
 
     const handleLogout = () => {
@@ -23,46 +23,53 @@ const Header = () => {
 
     return (
         <header className="w-full bg-zinc-950 text-white fixed top-0 z-50 shadow-md">
-        <div className="container mx-auto flex justify-between items-center p-5">
+            <div className="container mx-auto flex justify-between items-center p-5">
 
-            {/* Logo and User Status */}
-            <div className="flex items-center space-x-4">
-                <Link href="/">
-                    <div className="text-2xl font-bold cursor-pointer">
-                        <img src="/logos/theta-logo.png" className="invert" height={40} width={40}></img>
-                    </div>
-                </Link>
-                {user ? (
-                    <>
-                        <div className="bg-zinc-800 p-4 rounded-md shadow-md">
-                            <p className="text-white-900">Logged in as <span className="font-bold">{user.username}</span></p>
+                {/* Logo and User Status */}
+                <div className="flex items-center space-x-4">
+                    <Link href="/">
+                        <div className="text-2xl font-bold cursor-pointer">
+                            <img src="/logos/theta-logo.png" className="invert" height={40} width={40}></img>
                         </div>
-                    </>
-                ) : (
-                    <div className="flex items-center space-x-4">
+                    </Link>
+                    {user ? (
+                        <>
+                            <div className="bg-zinc-800 p-4 rounded-md shadow-md">
+                                <p className="text-white-900">Logged in as <span className="font-bold">{user.username}</span></p>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex items-center space-x-4">
 
-                        <p className="text-gray-600">
-                            Not logged in. ‎
-                            <Link href="/login" className="text-blue-600 hover:underline cursor-pointer">
-                                log in
-                            </Link>
-                            {" "}or{" "}
-                            <Link href="/register" className="text-blue-600 hover:underline cursor-pointer">
-                                register
-                            </Link>
-                        </p>
+                            <p className="text-gray-600">
+                                Not logged in. ‎
+                                <Link href="/login" className="text-blue-600 hover:underline cursor-pointer">
+                                    log in
+                                </Link>
+                                {" "}or{" "}
+                                <Link href="/register" className="text-blue-600 hover:underline cursor-pointer">
+                                    register
+                                </Link>
+                            </p>
 
 
-                    </div>
-                )}
+                        </div>
+                    )}
+                    
                 </div>
-
-                {/* Logo and home link */}
 
 
                 {/* Navigation links */}
                 <nav>
+                    
                     <ul className="flex space-x-4">
+                    {(!isLoading && user && user.role === 915) && (
+                        <li>
+                            <Link href="/admin">
+                                <div className={`text-xl font-semibold ${router.pathname === "/admin" ? "text-cyan-600" : ""} cursor-pointer`}>Admin</div>
+                            </Link>
+                        </li>
+                    )}  
                         <li>
                             <Link href="/alpha">
                                 <div className={`text-xl font-semibold ${router.pathname === "/alpha" ? "text-cyan-600" : ""} cursor-pointer`}>α</div>
@@ -73,6 +80,8 @@ const Header = () => {
                                 <div className={`text-xl font-semibold ${router.pathname === "/beta" ? "text-cyan-600" : ""} cursor-pointer`}>β</div>
                             </Link>
                         </li>
+
+
                         <li>
                             <Link href="/login">
                                 <div className={`text-xl font-semibold ${router.pathname === "/login" ? "text-cyan-600" : ""} cursor-pointer relative group`}>

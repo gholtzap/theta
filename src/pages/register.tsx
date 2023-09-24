@@ -31,6 +31,7 @@ export default function SignupPage() {
             username: formData.get('username') as string,
             email: formData.get('email') as string,
             password: password,
+            role:1
         };
     
         const response = await fetch(`${API_URL}/signup`, {

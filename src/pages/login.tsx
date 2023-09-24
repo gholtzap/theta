@@ -5,9 +5,6 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import jwt from 'jsonwebtoken';
 
-
-
-
 export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
@@ -44,13 +41,15 @@ export default function LoginPage() {
 
       const userEmail = responseData.email;
       const userName = responseData.username;
+      const userRole = responseData.role;
 
       console.log("Server Response - Email:", userEmail);
       console.log("Server Response - Username:", userName);
+      console.log("Server Response - Role:", userRole);
 
       const token = jwt.sign({ username: userName, email: userEmail }, 'SECRET_KEY', { expiresIn: '1h' });
 
-      localStorage.setItem('currentUser', JSON.stringify({ email: userEmail, username: userName }));
+      localStorage.setItem('currentUser', JSON.stringify({ email: userEmail, username: userName, role: userRole }));
 
       router.push('/');
     }
