@@ -33,11 +33,15 @@ const Header = () => {
                         </div>
                     </Link>
                     {user ? (
-                        <>
-                            <div className="bg-zinc-800 p-4 rounded-md shadow-md">
-                                <p className="text-white-900">Logged in as <span className="font-bold">{user.username}</span></p>
-                            </div>
-                        </>
+                        <div className="bg-zinc-800 p-4 rounded-md shadow-md">
+                            <p className="text-white-900">Logged in as{" "} 
+                                <Link href="/profile" className="font-bold cursor-pointer hover:underline">
+                                     {user.username}
+                                </Link>
+
+                            </p>
+                        </div>
+
                     ) : (
                         <div className="flex items-center space-x-4">
 
@@ -55,21 +59,21 @@ const Header = () => {
 
                         </div>
                     )}
-                    
+
                 </div>
 
 
                 {/* Navigation links */}
                 <nav>
-                    
+
                     <ul className="flex space-x-4">
-                    {(!isLoading && user && user.role === 915) && (
-                        <li>
-                            <Link href="/admin">
-                                <div className={`text-xl font-semibold ${router.pathname === "/admin" ? "text-cyan-600" : ""} cursor-pointer`}>Admin</div>
-                            </Link>
-                        </li>
-                    )}  
+                        {(!isLoading && user && user.role === 915) && (
+                            <li>
+                                <Link href="/admin">
+                                    <div className={`text-xl font-semibold ${router.pathname === "/admin" ? "text-cyan-600" : ""} cursor-pointer`}>Admin</div>
+                                </Link>
+                            </li>
+                        )}
                         <li>
                             <Link href="/alpha">
                                 <div className={`text-xl font-semibold ${router.pathname === "/alpha" ? "text-cyan-600" : ""} cursor-pointer`}>α</div>
