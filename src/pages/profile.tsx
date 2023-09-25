@@ -11,7 +11,7 @@ const Profile = () => {
   const [lastName, setLastName] = useState('');
   const [profilePicturePreview, setProfilePicturePreview] = useState('');
   const { user } = useUser();
-
+  const [portfolioValue, setPortfolioValue] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -30,7 +30,20 @@ const Profile = () => {
       }
     };
 
+    const fetchPortfolioValue = async () => {
+      if (!user) return;
+      try {
+          const response = await axios.get(`${API_URL}/portfolio_value/${user.username}`);
+          if (response.data && response.data.portfolio_value) {
+              setPortfolioValue(response.data.portfolio_value);
+          }
+      } catch (error) {
+          console.error('Failed to fetch portfolio value:', error);
+      }
+  };
+
     fetchUserData();
+    fetchPortfolioValue();
   }, [user]);
 
 
@@ -122,7 +135,7 @@ const Profile = () => {
               </div>
               <div className="ml-4 flex flex-col items-start">
                 <span className="text-base font-semibold text-zinc-950 dark:text-neutral-100">Portfolio Value</span>
-                <span className="text-xl font-semibold text-zinc-950 dark:text-neutral-100"><span className="text-zinc-950 dark:text-neutral-100">$</span>1234</span>
+                <span className="text-xl font-semibold text-zinc-950 dark:text-neutral-100"><span className="text-zinc-950 dark:text-neutral-100">$</span>{portfolioValue.toFixed(2)}</span>
               </div>
             </div>
           </div>

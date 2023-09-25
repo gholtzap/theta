@@ -69,14 +69,33 @@ const Header = () => {
                     <ul className="flex space-x-4">
                         {(!isLoading && user && user.role === 915) && (
                             <li>
+                                <Link href="/profile">
+                                <div className={`text-xl font-semibold ${router.pathname === "/login" ? "text-cyan-600" : ""} cursor-pointer relative group`}>
+                                    <img src='google_icons/profile.svg' className="filter invert"></img>
+                                    <span className="tooltiptext text-sm w-16 absolute opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-1/2 bottom-full left-1/2 transform px-3 py-1 bg-gray-700 text-white rounded shadow-lg">
+                                        Profile
+                                    </span>
+                                </div>
+                            </Link>
+                            </li>
+                        )}
+                        {(!isLoading && user) && (
+                            <li>
                                 <Link href="/admin">
-                                    <div className={`text-xl font-semibold ${router.pathname === "/admin" ? "text-cyan-600" : ""} cursor-pointer`}>Admin</div>
-                                </Link>
+                                <div className={`text-xl font-semibold ${router.pathname === "/login" ? "text-cyan-600" : ""} cursor-pointer relative group`}>
+                                    <img src='google_icons/admin.svg' className="filter invert"></img>
+                                    <span className="tooltiptext text-sm w-16 absolute opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-1/2 bottom-full left-1/2 transform px-3 py-1 bg-gray-700 text-white rounded shadow-lg">
+                                        Admin
+                                    </span>
+                                </div>
+                            </Link>
                             </li>
                         )}
                         <li>
                             <Link href="/alpha">
-                                <div className={`text-xl font-semibold ${router.pathname === "/alpha" ? "text-cyan-600" : ""} cursor-pointer`}>α</div>
+                                <div className={`text-xl font-semibold ${router.pathname === "/alpha" ? "text-cyan-600" : ""} cursor-pointer`}>
+                                    α
+                                    </div>
                             </Link>
                         </li>
                         <li>
@@ -89,9 +108,9 @@ const Header = () => {
                         <li>
                             <Link href="/login">
                                 <div className={`text-xl font-semibold ${router.pathname === "/login" ? "text-cyan-600" : ""} cursor-pointer relative group`}>
-                                    <img src='login.svg' className="filter invert"></img>
+                                    <img src='google_icons/login.svg' className="filter invert"></img>
                                     <span className="tooltiptext text-sm w-16 absolute opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-1/2 bottom-full left-1/2 transform px-3 py-1 bg-gray-700 text-white rounded shadow-lg">
-                                        Log In
+                                        Login
                                     </span>
                                 </div>
                             </Link>
@@ -103,7 +122,7 @@ const Header = () => {
                                 className={`text-xl font-semibold ${router.pathname === "/logout" ? "text-cyan-600" : ""} cursor-pointer relative group`}
                                 onClick={handleLogout}
                             >
-                                <img src='logout.svg' className="filter invert"></img>
+                                <img src='google_icons/logout.svg' className="filter invert"></img>
                                 <span className="tooltiptext text-sm w-20 absolute opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-1/2 bottom-full left-1/2 transform px-3 py-1 bg-gray-700 text-white rounded shadow-lg">
                                     Log Out
                                 </span>
@@ -112,7 +131,7 @@ const Header = () => {
                         <li>
                             <Link href="/register">
                                 <div className={`text-xl font-semibold ${router.pathname === "/register" ? "text-cyan-600" : ""} cursor-pointer relative group`}>
-                                    <img src='register.svg' className="filter invert"></img>
+                                    <img src='google_icons/register.svg' className="filter invert"></img>
                                     <span className="tooltiptext text-sm w-18 absolute opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-1/2 bottom-full left-1/2 transform px-3 py-1 bg-gray-700 text-white rounded shadow-lg">
                                         Register
                                     </span>
