@@ -200,7 +200,7 @@ const IndexMakerForm = () => {
                         className="w-full px-4 py-2 focus:outline-none text-black"
                     />
                     <button type="submit" className="absolute right-0 top-0 bg-white-500 text-white border-none px-6 py-3 scale-150">
-                        <img src="double_arrow.svg" alt="Submit" className="w-4 h-4" />
+                        <img src="google_icons/double_arrow.svg" alt="Submit" className="w-4 h-4" />
                     </button>
                 </form>
 

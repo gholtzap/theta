@@ -9,7 +9,7 @@ const TickerForm = () => {
   const [tickerInput, setTickerInput] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  
+
 
   const addTicker = () => {
     if (!tickers.includes(tickerInput)) {
@@ -40,7 +40,7 @@ const TickerForm = () => {
     setResults(data.result);
 
     setLoading(false);
-}
+  }
 
 
   const handleTickerAddition = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -58,7 +58,7 @@ const TickerForm = () => {
       <h1 className="mb-8 text-2xl font-bold">Timing</h1>
 
       {/* Ticker input */}
-      <div className="w-full max-w-md relative rounded-lg mb-8 overflow-hidden border border-zinc-900/30">
+      <div className="w-full max-w-md relative z-10 rounded-lg mb-8 overflow-hidden border border-zinc-900/30">
         <input
           type="text"
           value={tickerInput}
@@ -68,8 +68,13 @@ const TickerForm = () => {
           className="w-full px-4 py-2 focus:outline-none text-black"
         />
         <button type="button" onClick={handleSubmit} disabled={loading} className="absolute right-0 top-0 bg-white-500 text-white border-none px-6 py-3 scale-150">
-          <img src="double_arrow.svg" alt="Submit" className="w-4 h-4" />
-        </button>
+  {loading ? (
+    <div className="w-4 h-4 border-t-2 border-black rounded-full animate-spin"></div>
+  ) : (
+    <img src="google_icons/double_arrow.svg" alt="Submit" className="w-4 h-4" />
+  )}
+</button>
+
       </div>
 
       {/* Ticker list */}
@@ -81,12 +86,6 @@ const TickerForm = () => {
           </div>
         ))}
       </div>
-
-      {loading && (
-        <div className="fixed inset-0 flex items-center justify-center my-50">
-          <div className="z-10 text-white my-50 ">Loading...</div>
-        </div>
-      )}
 
 
       {/* Display results */}
