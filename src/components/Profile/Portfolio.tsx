@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useRef } from 'react';
 
 type Holding = {
-    ticker: string;
-    shares: number;
+    ticker?: string;
+    stock?: string;
+    shares?: number;
+    quantity?: number;
     price: number;
     id: number;
 };
@@ -96,21 +98,21 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
                 buy_ids: selectedItems,
             }),
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                setError(data.error);
-            } else {
-                // Refresh portfolio data after deleting
-                fetchPortfolioData();
-                setSelectedItems([]); // Clear selected items after delete
-            }
-        })
-        .catch(err => {
-            setError("Failed to delete selected stock buys.");
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    setError(data.error);
+                } else {
+                    // Refresh portfolio data after deleting
+                    fetchPortfolioData();
+                    setSelectedItems([]); // Clear selected items after delete
+                }
+            })
+            .catch(err => {
+                setError("Failed to delete selected stock buys.");
+            });
     };
-    
+
 
     const fetchPortfolioData = () => {
         fetch(`${API_URL}/portfolio/${username}`)
@@ -283,7 +285,7 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
     };
 
 
-    
+
 
     if (error) {
         return (
@@ -306,8 +308,20 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
     return (
         <div className="bg-white mt-40 p-8 dark:bg-neutral-800 rounded-xl shadow-lg space-y-6">
             {/* Add Stock Buy Form */}
+            <div className="relative inline-block">
+            <label htmlFor="csvUpload" className="cursor-pointer bg-zinc-500 text-white p-2 rounded-md hover:bg-zinc-600 transition duration-150">
+                Upload TD Ameritrade CSV
+            </label>
+            <input 
+                type="file" 
+                id="csvUpload"
+                onChange={handleCSVUpload} 
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+            />
+        </div>
+        <div className="mt-2 text-sm" id="fileName"></div>
             <div className="flex space-x-4">
-                <input type="file" onChange={handleCSVUpload} />
+                
                 <input ref={tickerRef} placeholder="Ticker" className="p-2 border rounded-md w-1/4 bg-zinc-800 text-zinc-400 placeholder-zinc-600" />
                 <input ref={quantityRef} type="number" placeholder="Quantity" className="p-2 border rounded-md w-1/4 bg-zinc-800 text-zinc-400 placeholder-zinc-600" />
                 <input ref={priceRef} type="number" placeholder="Price" className="p-2 border rounded-md w-1/4 bg-zinc-800 text-zinc-400 placeholder-zinc-600" />
@@ -326,12 +340,12 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
                         <table className="min-w-full table-auto">
                             <thead>
                                 <tr>
-                                <th className="px-4 py-2 border-b-2">
-            <input
-                type="checkbox"
-                onChange={e => e.target.checked ? setSelectedItems(portfolio.holdings.map(h => h.id)) : setSelectedItems([])}
-            />
-        </th>
+                                    <th className="px-4 py-2 border-b-2">
+                                        <input
+                                            type="checkbox"
+                                            onChange={e => e.target.checked ? setSelectedItems(portfolio.holdings.map(h => h.id)) : setSelectedItems([])}
+                                        />
+                                    </th>
                                     <th className="px-4 py-2 border-b-2">Ticker</th>
                                     <th className="px-4 py-2 border-b-2">Shares</th>
                                     <th className="px-4 py-2 border-b-2">Price Bought</th>
@@ -344,14 +358,15 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
 
                                     <tr key={index} className={index % 2 === 0 ? 'bg-zinc-500' : ''}>
                                         <td className="border px-4 py-2">
-                <input 
-                    type="checkbox" 
-                    checked={selectedItems.includes(holding.id)}
-                    onChange={e => handleSelect(e, holding.id)}
-                />
-            </td>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedItems.includes(holding.id)}
+                                                onChange={e => handleSelect(e, holding.id)}
+                                            />
+                                        </td>
                                         <td className="border px-4 py-2">{holding.ticker || holding.stock}</td>
                                         <td className="border px-4 py-2">{holding.shares || holding.quantity}</td>
+
 
 
                                         <td className="border px-4 py-2">${typeof holding.price === 'number' ? holding.price.toFixed(2) : holding.price}
@@ -359,7 +374,12 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
 
 
                                         <td className="flex space-x-2">
-                                            <button onClick={() => editStockBuy(holding.id, holding.stock, holding.quantity, holding.price)} className="bg-zinc-400 text-white p-1 rounded-md hover:bg-zinc-500 transition duration-150">Edit</button>
+                                            <button
+                                                onClick={() => editStockBuy(holding.id, holding.stock ?? "", holding.quantity ?? 0, holding.price)}
+                                                className="bg-zinc-400 text-white p-1 rounded-md hover:bg-zinc-500 transition duration-150"
+                                            >
+                                                Edit
+                                            </button>
                                             <button onClick={() => deleteStockBuy(holding.id)} className="bg-zinc-500 text-white p-1 rounded-md hover:bg-zinc-600 transition duration-150">Delete</button>
                                         </td>
                                     </tr>
