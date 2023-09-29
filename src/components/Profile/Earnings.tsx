@@ -1,6 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Earnings = () => {
+
+    const [sp500Change, setSp500Change] = useState(0);
+    const [dowJonesChange, setDowJonesChange] = useState(0);
+    const [sp500Price, setSp500Price] = useState<number | null>(null);
+    const [dowJonesPrice, setDowJonesPrice] = useState<number | null>(null);
+
+
+    useEffect(() => {
+        // Fetch stock data from the backend
+        fetch('/portfolio/market-data')  // Adjust the URL accordingly if your backend is hosted on a different domain or port
+            .then(response => response.json())
+            .then(data => {
+                setSp500Price(data.sp500);
+                setDowJonesPrice(data.dow_jones);
+            })
+            .catch(error => {
+                console.error('Failed to fetch market data:', error);
+            });
+    }, []);
+
     // Static earnings data (add your logic for determining increase/decrease)
     const totalEarnings = {
         value: 1500.50,
@@ -19,9 +39,6 @@ const Earnings = () => {
         change: 3.4,
     };
 
-    // Dummy comparative data for SP500 and Dow Jones
-    const sp500Change = 1.8; // Positive value means SP500 went up
-    const dowJonesChange = 2.5; // Positive value means Dow Jones went up
 
     const renderEarnings = (
         label: string, 

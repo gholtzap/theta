@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRef } from 'react';
+import EditModal from '../Modals/ProfileEditBuyModal'
 
 type Holding = {
     ticker?: string;
@@ -26,6 +27,9 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
     const quantityRef = useRef<HTMLInputElement>(null);
     const priceRef = useRef<HTMLInputElement>(null);
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
+    const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+    const [currentEditingStock, setCurrentEditingStock] = useState<Holding | null>(null);
+
 
 
     const addStockBuy = () => {
@@ -140,6 +144,57 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
             });
     };
 
+    const initiateEditStockBuy = (buy: Holding) => {
+        setCurrentEditingStock(buy);
+        setIsEditModalOpen(true);
+    }
+
+    const confirmEditStockBuy = (ticker: string, shares: number, price: number) => {
+        if (currentEditingStock) {
+            const buy_id = currentEditingStock.id;  // Assuming your Holding type has an 'id' field
+
+            // If the buy_id doesn't exist, return early to prevent potential errors
+            if (typeof buy_id === 'undefined') {
+                setError("The stock buy ID is missing.");
+                return;
+            }
+
+            fetch(`${API_URL}/portfolio/edit-buy`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username,
+                    buy_id,
+                    stock: ticker,
+                    quantity: shares,
+                    price: price
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        setError(data.error);
+                    } else {
+                        // Refresh portfolio data after editing
+                        fetchPortfolioData();
+                    }
+                    setIsEditModalOpen(false);  // Close the modal
+                    setCurrentEditingStock(null);  // Clear the current editing stock
+                })
+                .catch(err => {
+                    setError("Failed to edit stock buy.");
+                    setIsEditModalOpen(false);  // Still close the modal for better UX
+                });
+        } else {
+            setError("There's no stock buy currently being edited.");
+        }
+    }
+
+
+
+
 
     const editStockBuy = (buy_id: number, ticker: string, shares: number, price: number) => {
         const newTicker = prompt("Enter new ticker:", ticker) || ticker;
@@ -215,7 +270,6 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
     }
 
 
-
     const parseCSV = (content: string): StockData[] => {
         const lines = content.split("\n");
         const stocks: StockData[] = [];
@@ -285,43 +339,38 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
     };
 
 
+    if (error) { return (<div />); }
 
-
-    if (error) {
-        return (
-            <div>
-
-            </div>
-        );
-    }
-
-    if (!portfolio) {
-        return (
-            <div>
-                <div className="text-red-500">{error}</div>
-            </div>
-        );
-    }
-
-
+    if (!portfolio) { return (<div className="text-red-500">{error}</div>); }
 
     return (
         <div className="bg-white mt-40 p-8 dark:bg-neutral-800 rounded-xl shadow-lg space-y-6">
+
+            {isEditModalOpen && currentEditingStock && (
+                <EditModal
+                    show={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onConfirm={confirmEditStockBuy}
+                    ticker={currentEditingStock.ticker || ''}
+                    shares={currentEditingStock.shares || 0}
+                    price={currentEditingStock.price}
+                />
+            )}
             {/* Add Stock Buy Form */}
             <div className="relative inline-block">
-            <label htmlFor="csvUpload" className="cursor-pointer bg-zinc-500 text-white p-2 rounded-md hover:bg-zinc-600 transition duration-150">
-                Upload TD Ameritrade CSV
-            </label>
-            <input 
-                type="file" 
-                id="csvUpload"
-                onChange={handleCSVUpload} 
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-            />
-        </div>
-        <div className="mt-2 text-sm" id="fileName"></div>
+                <label htmlFor="csvUpload" className="cursor-pointer bg-zinc-500 text-white p-2 rounded-md hover:bg-zinc-600 transition duration-150">
+                    Upload TD Ameritrade CSV
+                </label>
+                <input
+                    type="file"
+                    id="csvUpload"
+                    onChange={handleCSVUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+            </div>
+            <div className="mt-2 text-sm" id="fileName"></div>
             <div className="flex space-x-4">
-                
+
                 <input ref={tickerRef} placeholder="Ticker" className="p-2 border rounded-md w-1/4 bg-zinc-800 text-zinc-400 placeholder-zinc-600" />
                 <input ref={quantityRef} type="number" placeholder="Quantity" className="p-2 border rounded-md w-1/4 bg-zinc-800 text-zinc-400 placeholder-zinc-600" />
                 <input ref={priceRef} type="number" placeholder="Price" className="p-2 border rounded-md w-1/4 bg-zinc-800 text-zinc-400 placeholder-zinc-600" />
@@ -375,12 +424,16 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
 
                                         <td className="flex space-x-2">
                                             <button
-                                                onClick={() => editStockBuy(holding.id, holding.stock ?? "", holding.quantity ?? 0, holding.price)}
+                                                onClick={() => initiateEditStockBuy(holding)}
                                                 className="bg-zinc-400 text-white p-1 rounded-md hover:bg-zinc-500 transition duration-150"
                                             >
                                                 Edit
                                             </button>
-                                            <button onClick={() => deleteStockBuy(holding.id)} className="bg-zinc-500 text-white p-1 rounded-md hover:bg-zinc-600 transition duration-150">Delete</button>
+                                            <button
+                                                onClick={() => deleteStockBuy(holding.id)}
+                                                className="bg-zinc-500 text-white p-1 rounded-md hover:bg-zinc-600 transition duration-150">
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
