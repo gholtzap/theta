@@ -351,10 +351,11 @@ const Portfolio: React.FC<{ username: string }> = ({ username }) => {
                     show={isEditModalOpen}
                     onClose={() => setIsEditModalOpen(false)}
                     onConfirm={confirmEditStockBuy}
-                    ticker={currentEditingStock.ticker || ''}
-                    shares={currentEditingStock.shares || 0}
+                    stock={currentEditingStock.stock || ''}
+                    quantity={currentEditingStock.quantity || 0}
                     price={currentEditingStock.price}
                 />
+
             )}
             {/* Add Stock Buy Form */}
             <div className="relative inline-block">
